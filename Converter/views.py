@@ -87,38 +87,33 @@ def temperatur_calc(request):
     if request.method == "POST":
         form = CalcTempForm(request.POST)
         if form.is_valid():
+            
+            #add constant dict with conversion
+            CONVERSIONS = {
+                ('C', 'F'): lambda x: (x*(9/5)) + 32,
+                ('C', 'K'): lambda x: x + 273.15,
+                ('C', 'R'): lambda x: (x*(9/5)) + 491,
+
+                ('F', 'C'): lambda x: (x - 32) / 1.8, 
+                ('F', 'K'): lambda x: (x+495) * (5/9),
+                ('C', 'R'): lambda x: x + 459.67, 
+
+                ('K', 'C'): lambda x: x - 273.15, 
+                ('K', 'F'): lambda x: (x * 1.8) - 459.67,
+                ('K', 'R'): lambda x: (x - 273.15) + 1.8,
+
+                ('R', 'C'): lambda x: x / 1.8,
+                ('R', 'F'): lambda x: x - 459.67,
+                ('R', 'K'): lambda x: x * 5/9,
+
+            }            
 
             temp = form.cleaned_data['temperature']
             unit_a = form.cleaned_data['unit_to_convert']
             unit_b = form.cleaned_data['unit_from_convert']
 
-            # calculate every res for every combination
-            if unit_a == 'C' and unit_b == 'F':
-                res = (temp * (9/5)) + 32
-            elif unit_a == 'C' and unit_b == 'K':
-                res = temp + 273.15
-            elif unit_a == 'C' and unit_b == 'R':
-                res = (temp * (9/5)) + 491.67
-            elif unit_a == 'F' and unit_b == 'C':
-                res = (temp - 32) / 1.8
-            elif unit_a == 'F' and unit_b == 'K':
-                res = (temp + 459) * (5/9)
-            elif unit_a == 'F' and unit_b == 'R':
-                res = temp + 459.67
-            elif unit_a == 'K' and unit_b == 'C':
-                res = temp - 273.15
-            elif unit_a == 'K' and unit_b == 'F':
-                res = (temp * 1.8) - 459.67
-            elif unit_a == 'K' and unit_b == 'R':
-                res = (temp - 273.15) + 1.8
-            elif unit_a == 'R' and unit_b == 'C':
-                res = temp / 1.8
-            elif unit_a == 'R' and unit_b == 'F':
-                res = temp - 459.67
-            elif unit_a == 'R' and unit_b == 'K':
-                res = temp * 5/9
-            else:  # if someone choose unit_a and unit_b as a same value
-                res = temp
+            res = temp if unit_a == unit_b else CONVERSIONS[unit_a, 
+                                                            unit_b](temp)
 
     else:
         res = None
