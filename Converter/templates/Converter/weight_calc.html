@@ -1,0 +1,24 @@
+{% extends "Converter/base.html" %}
+
+{% block title %}Kalkulator{% endblock %}
+
+{% block content %}
+
+    {% if not res %}
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+            <input type="submit" value="Konwertuj">
+
+        </form>
+    {% else %}
+        <p>Wynik:</p>
+        <p>Wartość początkowa: {{weight}} {{unit_a}}</p>
+        <p>Wartość końcowa: {{res}}</p>
+
+        <form method="get">
+            <input type="submit" value="Resetuj" target="_self">
+        </form>
+    {% endif %}
+{% endblock content %}

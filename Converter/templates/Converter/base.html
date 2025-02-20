@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %} Moja aplikacja {% endblock %}</title>
+</head>
+<body>
+
+    <div class="container">
+        <div class="nav-links"> <!-- Nowy div dla linków -->
+            <a href="{% url '' %}">Odległość</a>
+            <a href="{% url 'weight-calc' %}">Waga</a>
+            <a href="{% url 'temperature-calc' %}">Temperatura</a>
+        </div>
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Moja aplikacja</p>
+    </footer>
+</body>
+</html>
