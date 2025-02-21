@@ -37,8 +37,6 @@ venv\Scripts\activate # Windows
 
 3. **Install dependencies**
 ```bash
-pip install -r requirements.txt
-
 pip install django
 # Other required packages...
 pip install dotenv # to store SECRET_KEY
