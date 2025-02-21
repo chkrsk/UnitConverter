@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .forms import CalcLengthForm, CalcWeightForm, CalcTempForm
+from .services import UnitConverter
 
 # Create your views here.
 
@@ -10,23 +11,11 @@ def length_calc(request):
         form = CalcLengthForm(request.POST)
         if form.is_valid():
 
-            units = {
-                'mm': 1000,
-                'cm': 100,
-                'dm': 10,
-                'm': 1,
-                'km': 0.001,
-            }
-
             length = form.cleaned_data['length']
             unit_a = form.cleaned_data['unit_to_convert']
             unit_b = form.cleaned_data['unit_from_convert']
-            # if unit_a is the same as unit_b, we don't calculate
-            if unit_a != unit_b:
-                # unit conversation formula
-                res = f'{(length / units[unit_a]) * units[unit_b]} {unit_b}'
-            else:
-                res = length
+
+            res = UnitConverter.convert_length(length, unit_a, unit_b)
 
     else:
         res = None
@@ -49,23 +38,11 @@ def weight_calc(request):
         form = CalcWeightForm(request.POST)
         if form.is_valid():
 
-            units = {
-                'mg': 1000000,
-                'g': 1000,
-                'dag': 100,
-                'kg': 1,
-                't': 0.001,
-            }
-
             weight = form.cleaned_data['weight']
             unit_a = form.cleaned_data['unit_to_convert']
             unit_b = form.cleaned_data['unit_from_convert']
-            # if unit_a is the same as unit_b, we don't calculate
-            if unit_a != unit_b:
-                # unit conversation formula
-                res = f'{(weight / units[unit_a]) * units[unit_b]} {unit_b}'
-            else:
-                res = weight
+
+            res = UnitConverter.convert_weight(weight, unit_a, unit_b)
 
     else:
         res = None
@@ -87,18 +64,18 @@ def temperatur_calc(request):
     if request.method == "POST":
         form = CalcTempForm(request.POST)
         if form.is_valid():
-            
-            #add constant dict with conversion
+
+            # add constant dict with conversion
             CONVERSIONS = {
                 ('C', 'F'): lambda x: (x*(9/5)) + 32,
                 ('C', 'K'): lambda x: x + 273.15,
                 ('C', 'R'): lambda x: (x*(9/5)) + 491,
 
-                ('F', 'C'): lambda x: (x - 32) / 1.8, 
+                ('F', 'C'): lambda x: (x - 32) / 1.8,
                 ('F', 'K'): lambda x: (x+495) * (5/9),
-                ('C', 'R'): lambda x: x + 459.67, 
+                ('C', 'R'): lambda x: x + 459.67,
 
-                ('K', 'C'): lambda x: x - 273.15, 
+                ('K', 'C'): lambda x: x - 273.15,
                 ('K', 'F'): lambda x: (x * 1.8) - 459.67,
                 ('K', 'R'): lambda x: (x - 273.15) + 1.8,
 
@@ -106,13 +83,13 @@ def temperatur_calc(request):
                 ('R', 'F'): lambda x: x - 459.67,
                 ('R', 'K'): lambda x: x * 5/9,
 
-            }            
+            }
 
             temp = form.cleaned_data['temperature']
             unit_a = form.cleaned_data['unit_to_convert']
             unit_b = form.cleaned_data['unit_from_convert']
 
-            res = temp if unit_a == unit_b else CONVERSIONS[unit_a, 
+            res = temp if unit_a == unit_b else CONVERSIONS[unit_a,
                                                             unit_b](temp)
 
     else:
